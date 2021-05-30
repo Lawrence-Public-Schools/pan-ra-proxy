@@ -1,0 +1,26 @@
+version: 2
+jobs:
+  build:
+    working_directory: /root/source
+    docker:
+      - image: mono:latest
+    steps:
+      - run:
+          name: Update APT listing
+          command: apt-get -qq update
+      - run:
+          name: Install git and ssh
+          command: apt-get -qq -y --no-install-recommends install git openssh-client
+      - checkout
+      - run:
+          name: Build Release
+          command: msbuild /verbosity:minimal /p:BuildWithMono="true" /p:Configuration=Release "/root/source/src/Lithnet.Pan.RAProxy/Lithnet.Pan.RAProxy.csproj"
+      - run:
+          name: Debug Release
+          command: msbuild /verbosity:minimal /p:BuildWithMono="true" /p:Configuration=Debug "/root/source/src/Lithnet.Pan.RAProxy/Lithnet.Pan.RAProxy.csproj"
+      - store_artifacts:
+          path: /root/source/src/Lithnet.Pan.RAProxy/bin/Release
+          destination: Release
+      - store_artifacts:
+          path: /root/source/src/Lithnet.Pan.RAProxy/bin/Debug
+          destination: Debug
