@@ -209,16 +209,17 @@ namespace Lithnet.Pan.RAProxy
 
             NameValueCollection queryString = HttpUtility.ParseQueryString(string.Empty);
 
-            /*\
-            if (Config.ActiveEndPoint.UrlEncodeKey)
-            {
-                queryString["key"] = HttpUtility.UrlEncode(ep.ApiKey);
+            if (Config.ActiveEndPoint.ApiKeyHeader != true)
+            {            
+                if (Config.ActiveEndPoint.UrlEncodeKey)
+                {
+                    queryString["key"] = HttpUtility.UrlEncode(ep.ApiKey);
+                }
+                else
+                {
+                    queryString["key"] = ep.ApiKey;
+                }
             }
-            else
-            {
-                queryString["key"] = ep.ApiKey;
-            }
-			*/
 
             queryString["type"] = this.ApiType;
 
@@ -226,15 +227,17 @@ namespace Lithnet.Pan.RAProxy
 
             HttpWebRequest request = this.GetRequestContent(builder.Uri, messageText);
             request.ServicePoint.Expect100Continue = false;
-			
-
-            if (Config.ActiveEndPoint.UrlEncodeKey)
+            
+            if (Config.ActiveEndPoint.ApiKeyHeader)
             {
-                request.Headers["X-PAN-KEY"] = HttpUtility.UrlEncode(ep.ApiKey);
-            }
-            else
-            {
-                request.Headers["X-PAN-KEY"] = ep.ApiKey;
+                if (Config.ActiveEndPoint.UrlEncodeKey)
+                {
+                    request.Headers["X-PAN-KEY"] = HttpUtility.UrlEncode(ep.ApiKey);
+                }
+                else
+                {
+                    request.Headers["X-PAN-KEY"] = ep.ApiKey;
+                }
             }
 
 
