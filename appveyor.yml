@@ -1,8 +1,15 @@
-image: Visual Studio 2019
+version: 1.0.{build}
+
+image:
+- Visual Studio 2019
+- Visual Studio 2022
 
 configuration:
 - Release
 - Debug
+
+before_build:
+- cmd: nuget restore src\Lithnet.Pan.RAProxy\Lithnet.Pan.RAProxy.csproj
 
 build:
   parallel: true
@@ -12,8 +19,8 @@ build:
 after_build:
 - cmd: git rev-parse --short %APPVEYOR_REPO_COMMIT%>%TMP%\gitshort.txt
 - cmd: set /P GITSHORT=<%TMP%\gitshort.txt
-- set BUILD_ARCHIVE=%APPVEYOR_REPO_BRANCH%-%GITSHORT%-%CONFIGURATION%.7z
+- cmd: set BUILD_ARCHIVE=%APPVEYOR_REPO_BRANCH%-%GITSHORT%-%CONFIGURATION%.7z
 - cmd: cd "src\Lithnet.Pan.RAProxy\bin\"
 - cmd: cd "%CONFIGURATION%"
-- cmd: 7z a %BUILD_ARCHIVE% *.* -xr!.gitignore
-- appveyor PushArtifact %BUILD_ARCHIVE%
+- cmd: 7z a %BUILD_ARCHIVE% -r
+- cmd: appveyor PushArtifact %BUILD_ARCHIVE%
