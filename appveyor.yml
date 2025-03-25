@@ -4,6 +4,9 @@ configuration:
 - Release
 - Debug
 
+before_build:
+- cmd: nuget restore src\Lithnet.Pan.RAProxy\Lithnet.Pan.RAProxy.csproj
+
 build:
   parallel: true
   project: src\Lithnet.Pan.RAProxy\Lithnet.Pan.RAProxy.csproj
